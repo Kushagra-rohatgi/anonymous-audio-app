@@ -1,6 +1,5 @@
 import Link from 'next/link'
-import { createClient } from '@/utils/supabase/server'
-import { redirect } from 'next/navigation'
+import { signIn, signUp } from './actions'
 import { SubmitButton } from './submit-button'
 
 export default function Login({
@@ -8,52 +7,6 @@ export default function Login({
 }: {
   searchParams: { message: string }
 }) {
-  const signIn = async (formData: FormData) => {
-    'use server'
-
-    const username = formData.get('username') as string
-    const password = formData.get('password') as string
-    const supabase = createClient()
-
-    // We use the username to construct a dummy email for auth
-    const email = `${username}@yourapp.com`
-
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
-
-    if (error) {
-      return redirect('/login?message=Could not authenticate user')
-    }
-
-    return redirect('/')
-  }
-
-  const signUp = async (formData: FormData) => {
-    'use server'
-
-    const username = formData.get('username') as string
-    const password = formData.get('password') as string
-    const supabase = createClient()
-
-    const { error } = await supabase.auth.signUp({
-      email: `${username}@yourapp.com`,
-      password,
-      options: {
-        data: {
-          username: username,
-        }
-      },
-    })
-
-    if (error) {
-      return redirect('/login?message=Could not sign up user')
-    }
-
-    return redirect('/login?message=Check email for verification link')
-  }
-
   return (
     <div className="flex-1 flex flex-col w-full px-8 sm:max-w-md justify-center gap-2">
       <Link
